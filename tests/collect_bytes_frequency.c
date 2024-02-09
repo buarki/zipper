@@ -6,7 +6,6 @@
 #include "../huffman/collect_bytes_frequency.h"
 #include "../huffman/consts.h"
 
-
 int main() {
   unsigned char content[] = "@\\2//@a-2=";
   size_t contentSize = 10;
