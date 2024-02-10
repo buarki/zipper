@@ -23,5 +23,10 @@ test_build_huffman_tree_from_min_heap:
 	./build_huffman_tree_from_min_heap
 	rm build_huffman_tree_from_min_heap
 
-test: test_collect_bytes_frequency test_huffman_tree test_min_heap test_build_min_heap_from_bytes_frequency test_build_huffman_tree_from_min_heap
+test_build_symbol_codes_from_tree:
+	g++ -o build_symbol_codes_from_tree tests/build_symbol_codes_from_tree.c huffman/*.cpp
+	./build_symbol_codes_from_tree
+	rm build_symbol_codes_from_tree
+
+test: test_collect_bytes_frequency test_huffman_tree test_min_heap test_build_min_heap_from_bytes_frequency test_build_huffman_tree_from_min_heap test_build_symbol_codes_from_tree
 	echo "All tests successfully finished!"
