@@ -18,5 +18,10 @@ test_build_min_heap_from_bytes_frequency:
 	./build_min_heap_from_bytes_frequency
 	rm build_min_heap_from_bytes_frequency
 
-test: test_collect_bytes_frequency test_huffman_tree test_min_heap test_build_min_heap_from_bytes_frequency
+test_build_huffman_tree_from_min_heap:
+	g++ -o build_huffman_tree_from_min_heap tests/build_huffman_tree_from_min_heap.c huffman/*.cpp
+	./build_huffman_tree_from_min_heap
+	rm build_huffman_tree_from_min_heap
+
+test: test_collect_bytes_frequency test_huffman_tree test_min_heap test_build_min_heap_from_bytes_frequency test_build_huffman_tree_from_min_heap
 	echo "All tests successfully finished!"
