@@ -3,6 +3,8 @@
 
 #define ASCII_SYMBOLS 256
 
-#define JOINNING_SYMBOL '@'
+#define JOINING_SYMBOL '@'
+
+#define ESCAPING_SYMBOL '\\'
 
 #endif

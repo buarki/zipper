@@ -5,6 +5,7 @@
 #include "config.h"
 
 #include "../huffman/huffman_tree.h"
+#include "../huffman/consts.h"
 
 HuffmanNode* createSampleHuffmanTree() {
   HuffmanNode* leafA = newHuffmanNode('a', 5);
@@ -59,9 +60,49 @@ void testtraverseAndCollectByteFrequencyPair() {
   free(actualNodes);
 }
 
+HuffmanNode* createSampleHuffmanTree1() {
+  HuffmanNode *left = newHuffmanNode(JOINING_SYMBOL, 1);
+  HuffmanNode *right = newHuffmanNode(ESCAPING_SYMBOL, 1);
+  HuffmanNode *root = newHuffmanNode(JOINING_SYMBOL, left->frequency + right->frequency);
+  root->left = left;
+  root->right = right;
+  return root;
+}
+
+void testComputeRequiredBytesForTreeContent() {
+  HuffmanNode *tree = createSampleHuffmanTree1();
+  assert(tree != NULL);
+  uint16_t expectedRequiredBytes = 5;
+
+  uint16_t requiredBytes = computeRequiredBytesForTreeContent(tree);
+  assert(requiredBytes == expectedRequiredBytes);
+
+  destroyHuffmanNode(tree);
+}
+
+void testCollectTreeSymbolsToExport() {
+  HuffmanNode *tree = createSampleHuffmanTree1();
+  assert(tree != NULL);
+
+  unsigned char *symbols = collectTreeSymbolsToExport(tree);
+  assert(symbols != NULL);
+  size_t reuiredBytesForTreeContent = computeRequiredBytesForTreeContent(tree);
+
+  unsigned char expectedSymbols[reuiredBytesForTreeContent] = {JOINING_SYMBOL, ESCAPING_SYMBOL, JOINING_SYMBOL, ESCAPING_SYMBOL, ESCAPING_SYMBOL};
+
+  for (size_t i = 0; i < reuiredBytesForTreeContent; i++) {
+    assert(symbols[i] == expectedSymbols[i]);
+  }
+
+  free(symbols);
+  destroyHuffmanNode(tree);
+}
+
 int main() {
   testCreatingANode();
   testtraverseAndCollectByteFrequencyPair();
+  testComputeRequiredBytesForTreeContent();
+  testCollectTreeSymbolsToExport();
 
   return 0;
 }
