@@ -33,5 +33,30 @@ test_header:
 	./header
 	rm header
 
-test: test_collect_bytes_frequency test_huffman_tree test_min_heap test_build_min_heap_from_bytes_frequency test_build_huffman_tree_from_min_heap test_build_symbol_codes_from_tree test_header
+test_compute_required_bytes_for_encoded_symbols:
+	g++ -o compute_required_bytes_for_encoded_symbols tests/compute_required_bytes_for_encoded_symbols.c huffman/*.cpp
+	./compute_required_bytes_for_encoded_symbols
+	rm compute_required_bytes_for_encoded_symbols
+
+test_collect_symbol_codes_to_export:
+	g++ -o collect_symbol_codes_to_export tests/collect_symbol_codes_to_export.c huffman/*.cpp
+	./collect_symbol_codes_to_export
+	rm collect_symbol_codes_to_export
+
+test_compress:
+	g++ -o compress tests/compress.c huffman/*.cpp
+	./compress
+	rm compress
+
+test_compute_compressed_file_symbols_length:
+	g++ -o compute_compressed_file_symbols_length tests/compute_compressed_file_symbols_length.c huffman/*.cpp
+	./compute_compressed_file_symbols_length
+	rm compute_compressed_file_symbols_length
+
+test_compute_padding_bits_for_compressed_codes:
+	g++ -o compute_padding_bits_for_compressed_codes tests/compute_padding_bits_for_compressed_codes.c huffman/*.cpp
+	./compute_padding_bits_for_compressed_codes
+	rm compute_padding_bits_for_compressed_codes
+
+test: test_collect_bytes_frequency test_huffman_tree test_min_heap test_build_min_heap_from_bytes_frequency test_build_huffman_tree_from_min_heap test_build_symbol_codes_from_tree test_header test_compute_required_bytes_for_encoded_symbols test_collect_symbol_codes_to_export test_compress test_compute_compressed_file_symbols_length test_compute_padding_bits_for_compressed_codes
 	echo "All tests successfully finished!"

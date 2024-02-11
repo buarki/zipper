@@ -10,12 +10,12 @@
 
 void testCreateHeader() {
   uint16_t treeSize = 3;
-  uint16_t encodedSymbolCodesSize = 3;
+  uint16_t paddingBitsRequiredForEncodedSymbols = 5;
   uint8_t expectedPaddingBits = 5;
   uint16_t expectedGeneratedFirstByte = 0b10100000;
   unsigned char expectedGeneratedSecondByte = 0b00000011;
 
-  Header *header = createHeader(treeSize, encodedSymbolCodesSize);
+  Header *header = createHeader(treeSize, paddingBitsRequiredForEncodedSymbols);
   assert(header != NULL);
 
   assert(header->info->paddingBitsForEncodedSymbols == expectedPaddingBits);

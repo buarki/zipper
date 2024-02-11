@@ -15,7 +15,7 @@ typedef struct {
   HeaderInfo *info;
 } Header;
 
-Header *createHeader(uint16_t treeContentSize, uint16_t encodedSymbolCodesSize);
+Header *createHeader(uint16_t treeContentSize, uint16_t paddingBitsRequiredForEncodedSymbols);
 
 HeaderInfo *getHeaderInfo(unsigned char *compressedFileContent);
 
