@@ -1,11 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "huffman_tree.h"
+#include "consts.h"
 
 void traverseAndPrintHelper(HuffmanNode *root, TraversalOrder order);
 void collectNodes(HuffmanNode *root, ByteFrequencyPair *pairArray, size_t *index, TraversalOrder order);
 size_t countNodes(HuffmanNode *root);
+void computeRequiredBytesForTreeContentUtil(HuffmanNode *node, uint16_t *requiredBytes) ;
+void fillTreeContentBufferUtil(HuffmanNode *node, unsigned char *treeContentBuffer, size_t *treeContentBufferIndex);
 
 HuffmanNode *newHuffmanNode(unsigned char byte, size_t frequency) {
   HuffmanNode *newNode = (HuffmanNode*) malloc(sizeof(HuffmanNode));
@@ -26,6 +30,23 @@ void destroyHuffmanNode(HuffmanNode *node) {
   destroyHuffmanNode(node->left);
   destroyHuffmanNode(node->right);
   free(node);
+}
+
+uint16_t computeRequiredBytesForTreeContent(HuffmanNode *root) {
+  uint16_t requiredBytes = 0;
+  computeRequiredBytesForTreeContentUtil(root, &requiredBytes);
+  return requiredBytes;
+}
+
+unsigned char *collectTreeSymbolsToExport(HuffmanNode *root) {
+  uint16_t treeContentLength = computeRequiredBytesForTreeContent(root);
+  unsigned char *treeContentBuffer = (unsigned char*) calloc(treeContentLength, sizeof(unsigned char));
+  if (treeContentBuffer == NULL) {
+    return NULL;
+  }
+  size_t treeContentBufferIndex = 0;
+  fillTreeContentBufferUtil(root, treeContentBuffer, &treeContentBufferIndex);
+  return treeContentBuffer;
 }
 
 void traverseAndPrint(HuffmanNode *root, TraversalOrder order) {
@@ -124,4 +145,40 @@ size_t countNodes(HuffmanNode *root) {
     return 0;
   }
   return 1 + countNodes(root->left) + countNodes(root->right);
+}
+
+void computeRequiredBytesForTreeContentUtil(HuffmanNode *node, uint16_t *requiredBytes) {
+  bool currentNodeIsALeaf = node->left == NULL && node->right == NULL;
+  if (currentNodeIsALeaf) {
+    if (node->byte == ESCAPING_SYMBOL || node->byte == JOINING_SYMBOL) {
+      (*requiredBytes)++;
+    }
+    (*requiredBytes)++;
+    return;
+  }
+  (*requiredBytes)++;
+  if (node->left != NULL) {
+    computeRequiredBytesForTreeContentUtil(node->left, requiredBytes);
+  }
+  if (node->right != NULL) {
+    computeRequiredBytesForTreeContentUtil(node->right, requiredBytes);
+  }
+}
+
+void fillTreeContentBufferUtil(HuffmanNode *node, unsigned char *treeContentBuffer, size_t *treeContentBufferIndex) {
+  bool currentNodeIsALeaf = node->left == NULL && node->right == NULL;
+  if (currentNodeIsALeaf) {
+    if (node->byte == ESCAPING_SYMBOL || node->byte == JOINING_SYMBOL) {
+      treeContentBuffer[(*treeContentBufferIndex)++] = ESCAPING_SYMBOL;
+    }
+    treeContentBuffer[(*treeContentBufferIndex)++] = node->byte;
+    return;
+  }
+  treeContentBuffer[(*treeContentBufferIndex)++] = node->byte;
+  if (node->left != NULL) {
+    fillTreeContentBufferUtil(node->left, treeContentBuffer, treeContentBufferIndex);
+  }
+  if (node->right != NULL) {
+    fillTreeContentBufferUtil(node->right, treeContentBuffer, treeContentBufferIndex);
+  }
 }
