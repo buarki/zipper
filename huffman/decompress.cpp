@@ -79,9 +79,11 @@ DecompressionResult *decompress(unsigned char *compressedContent, size_t compres
   if (headerInfo == NULL) {
     return NULL;
   }
+  printf("header: tree size [%d], padding: [%d]\n", headerInfo->treeContentSize, headerInfo->paddingBitsForEncodedSymbols);
   unsigned char *treeContent = &compressedContent[HEADER_REQUIRED_BYTES];
   unsigned char *compressedSymbols = &compressedContent[HEADER_REQUIRED_BYTES + headerInfo->treeContentSize];
   HuffmanNode *tree = buildTreeFromCompressedFile(treeContent, headerInfo->treeContentSize);
+  printf("Treee\n");
   if (tree == NULL) {
     destroyDecompressionResult(result);
     destroyHeaderInfo(headerInfo);
@@ -89,7 +91,9 @@ DecompressionResult *decompress(unsigned char *compressedContent, size_t compres
   }
   size_t compressedSymbolsSize = compressedContentSize - HEADER_REQUIRED_BYTES - headerInfo->treeContentSize;
   result->size = computeBytesRequiredForDecompressedFile(tree, compressedSymbols, compressedSymbolsSize, headerInfo->paddingBitsForEncodedSymbols);
+  printf("know the size..\n");
   result->bytes = buildDecompressedFile(tree, compressedSymbols, compressedSymbolsSize, headerInfo->paddingBitsForEncodedSymbols, result->size);
+  printf("bytes...\n");
   if (result->bytes == NULL) {
     destroyDecompressionResult(result);
     destroyHuffmanNode(tree);

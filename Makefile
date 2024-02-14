@@ -1,3 +1,15 @@
+wasm:
+	em++ huffman/*.cpp \
+			 -s WASM=1 \
+			 -s EXPORTED_FUNCTIONS="[_receiveContent, _simple, _c_compress, _c_getContent, _free, _malloc]" \
+			 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap', 'UTF8ToString', 'writeArrayToMemory', 'getValue']" \
+			 -o zipper.js || exit 1
+	mv zipper.js public/zipper.js
+	mv zipper.wasm public/zipper.wasm
+
+emserve:
+	emrun --port 8080 public/
+
 test_collect_bytes_frequency:
 	g++ -o collect_bytes_frequency tests/collect_bytes_frequency.c huffman/*.cpp
 	./collect_bytes_frequency
