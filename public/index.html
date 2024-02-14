@@ -20,7 +20,8 @@
       <div class="lg:w-1/2 p-3">
         <h2 class="text-2xl mb-4">Compression</h2>
         <form id="uploadForm" enctype="multipart/form-data" class="mb-4">
-          <input type="file" id="fileInput" accept=".txt, .pdf, .jpg, .png, .zip" class="mb-2" />
+          <label for="fileInput" class="form-label">Select file to compress (Max 40KB):</label>
+          <input type="file" id="fileInput" accept=".txt, .pdf, .jpg, .png, .zip" class="mb-2" onchange="validateFileSize('fileInput')" />
           <button type="button" onclick="uploadFileToCompress()" class="bg-blue-500 hover:bg-blue-300 text-white px-4 py-2 rounded">Compress</button>
         </form>
       </div>
@@ -28,6 +29,7 @@
       <div class="lg:w-1/2 p-3">
         <h2 class="text-2xl mb-4">Decompression</h2>
         <form id="decompressForm" class="mb-4">
+          <label for="fileInput" class="form-label">Select file to decompress:</label>
           <input type="file" id="decompressFileInput" accept=".zipp" class="mb-2" />
           <button type="button" onclick="uploadFileToDecompress()" class="bg-green-500 hover:bg-green-300 text-white px-4 py-2 rounded">Decompress</button>
         </form>
@@ -35,11 +37,25 @@
     </div>
 
     <footer class="text-center p-8">
-      <p class="text-sm text-gray-600">Copyright &copy; 2024 <a class="hover:underline" title="Author website" target="_blank" href="https://www.buarki.com/">buarki.com</a>. All rights reserved.</p>
+      <p class="text-sm font-light text-gray-600">Copyright &copy; 2024 <a class="hover:underline" title="Author website" target="_blank" href="https://www.buarki.com/">buarki.com</a>. All rights reserved.</p>
     </footer>
 
     <script src="./zipper.js"></script>
     <script>
+      const KB = 1024;
+      const MAX_ALLOWED_SIZE = 40 * KB;
+
+      function validateFileSize(inputId) {
+        const input = document.getElementById(inputId);
+        if (input.files && input.files[0]) {
+          if (input.files[0].size > MAX_ALLOWED_SIZE) {
+            alert("File size exceeds the maximum allowed one (40KB). Please choose a smaller file.");
+            input.value = '';
+            return;
+          }
+        }
+      }
+
       async function compress(file) {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
