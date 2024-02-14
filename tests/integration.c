@@ -121,9 +121,31 @@ void testCompressionAndDecompression(
   assert(remove(pathToPlaceDecompressedContent) == 0);
 }
 
+void testDecompression(const char *originalFile, const char *compressedFile, const char *tempFile) {
+  SampleFile fileToDecompress = loadSampleFile(compressedFile);
+  DecompressionResult *decompressionResult = decompress(fileToDecompress.content, fileToDecompress.size);
+  printf("aaa\n");
+  if (decompressionResult == NULL) {
+    free(fileToDecompress.content);
+    exit(1);
+  }
+  FILE *decompressedOutputFile = fopen(tempFile, "wb");
+  if (decompressedOutputFile == NULL) {
+    free(fileToDecompress.content);
+    destroyDecompressionResult(decompressionResult);
+    exit(1);
+  }
+  fwrite(decompressionResult->bytes, sizeof(unsigned char), decompressionResult->size, decompressedOutputFile);
+  fclose(decompressedOutputFile);
+  destroyDecompressionResult(decompressionResult);
+  free(fileToDecompress.content);
+
+  assert(filesAreEqual(originalFile, tempFile));
+}
+
 int main() {
   const char sampleFilePath1[] = "./tests/samples/wave.txt";
-  const char compressedFilePath1[] = "./tests/samples/compressed-text.bin";
+  const char compressedFilePath1[] = "./tests/samples/wave.bin";
   const char decompressedFilePath1[] = "./tests/samples/wave1.txt";
   testCompressionAndDecompression(sampleFilePath1, compressedFilePath1, decompressedFilePath1);
 
