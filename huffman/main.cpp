@@ -9,21 +9,40 @@
 unsigned char *content;
 uint32_t size;
 
+unsigned char *decompressedContent;
+uint32_t decompressedSize;
+
 extern "C" {
   uint32_t c_compress(unsigned char *fileContent, size_t fileContentSize);
-  unsigned char *c_getContent();
+  void receiveContent(unsigned char *buffer, size_t bufferSize);
 
-  void receiveContent(unsigned char *buffer, size_t bufferSize) {
-    printf("buffer size: [%d]\n", bufferSize);
-    printf("first: [%d]\n", content[0]);
-    printf("second: [%d]\n", content[1]);
-    memcpy(buffer, content, bufferSize);
-    free(content);
-  }
+  uint32_t c_decompress(unsigned char *compressedFileContent, size_t compressedFileContentSize);
+  void collectDecompressedContent(unsigned char *buffer, size_t bufferSize);
+}
 
-  uint32_t simple(uint32_t a, uint32_t b) {
-    return a + b;
+uint32_t c_decompress(unsigned char *compressedFileContent, size_t compressedFileContentSize) {
+  if (decompressedContent == NULL) {
+    free(decompressedContent);
+    decompressedContent = NULL;
   }
+  DecompressionResult *decompressionResult = decompress(compressedFileContent, compressedFileContentSize);
+  if (decompressionResult == NULL) {
+    printf("failed to decompressed\n");
+    return -1;
+  }
+  memcpy(decompressedContent, decompressionResult->bytes, decompressionResult->size);
+  decompressedSize = decompressionResult->size;
+  destroyDecompressionResult(decompressionResult);
+  return decompressedSize;
+}
+
+void collectDecompressedContent(unsigned char *buffer, size_t bufferSize) {
+  printf("buffer size: [%d]\n", bufferSize);
+  printf("first: [%d]\n", decompressedContent[0]);
+  printf("second: [%d]\n", decompressedContent[1]);
+  memcpy(buffer, decompressedContent, bufferSize);
+  free(decompressedContent);
+  decompressedContent = NULL;
 }
 
 uint32_t c_compress(unsigned char *fileContent, size_t fileContentSize) {
@@ -55,7 +74,11 @@ uint32_t c_compress(unsigned char *fileContent, size_t fileContentSize) {
   return size;
 }
 
-unsigned char *c_getContent() {
+void receiveContent(unsigned char *buffer, size_t bufferSize) {
+  printf("buffer size: [%d]\n", bufferSize);
   printf("first: [%d]\n", content[0]);
-  return content;
+  printf("second: [%d]\n", content[1]);
+  memcpy(buffer, content, bufferSize);
+  free(content);
+  content = NULL;
 }

@@ -1,92 +1,162 @@
-<html>
-  <header>
-    <title>zipper</title>
-  </header>
-  <body>
-    <form id="uploadForm" enctype="multipart/form-data">
-      <input type="file" id="fileInput" accept=".txt, .pdf, .jpg, .png, .zip" />
-      <button type="button" onclick="uploadFile()">Upload File</button>
-  </form>
-  <script src="./zipper.js"></script>
-  <script>
-    async function getFileContent(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          const fileData = new Uint8Array(event.target.result);
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zipper</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  </head>
+  <body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div class="w-full lg:w-3/4 xl:w-1/2 flex flex-col lg:flex-row">
+      <!-- Compression Section -->
+      <div class="lg:w-1/2 p-3">
+        <h2 class="text-2xl font-bold mb-4">Compression</h2>
+        <form id="uploadForm" enctype="multipart/form-data" class="mb-4">
+          <input type="file" id="fileInput" accept=".txt, .pdf, .jpg, .png, .zip" class="mb-2" />
+          <button type="button" onclick="uploadFileToCompress()" class="bg-blue-500 text-white px-4 py-2 rounded">Compress</button>
+        </form>
+      </div>
 
-          const fileContentPtr = Module._malloc(fileData.length);
+      <!-- Decompression Section -->
+      <div class="lg:w-1/2 p-3">
+        <h2 class="text-2xl font-bold mb-4">Decompression</h2>
+        <form id="decompressForm" class="mb-4">
+          <input type="file" id="decompressFileInput" accept=".zipp" class="mb-2" />
+          <button type="button" onclick="uploadFileToDecompress()" class="bg-green-500 text-white px-4 py-2 rounded">Decompress</button>
+        </form>
+      </div>
+    </div>
 
-          Module.writeArrayToMemory(fileData, fileContentPtr);
-          console.log(`writeArrayToMemory [${fileData.length}]`);
-
-          const size = Module.ccall(
-                            'c_compress',
-                            'number',
-                            ['[number]', 'number'],
-                            [fileContentPtr, fileData.length]);
-          console.log({size});
-
-          const buffer = Module._malloc(size);
-          Module.ccall(
-            'receiveContent',
-            null,
-            ['[number]', 'number'],
-            [buffer,size],
-          );
-          const content = new Uint8Array(Module.HEAPU8.buffer).slice(buffer, buffer + size);
-
-          _free(fileContentPtr);
-          _free(buffer);
-         
-          resolve(content);
-        };
-
-        reader.onerror = function (event) {
-          reject(event.target.error);
-        };
-
-        reader.readAsArrayBuffer(file);
-      });
-    }
-
-    function downloadFile(data, filename, type) {
-      const blob = new Blob([data], { type: type });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    async function uploadFile() {
-      const fileInput = document.getElementById('fileInput');
-      const file = fileInput.files[0];
-
-      if (file) {
-        try {
-          const fileContent = await getFileContent(file);
-          // just adding the text area
-          const textarea = document.createElement('textarea');
-          textarea.value = fileContent;
-          document.body.appendChild(textarea);
-
-          downloadFile(fileContent, 'compressed_file.zipp', 'application/octet-stream');
-        } catch (error) {
-          console.error('Error getting file content:', error);
-        }
-      } else {
-        alert('Please select a file.');
+    <script src="./zipper.js"></script>
+    <script>
+      async function compress(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            const fileData = new Uint8Array(event.target.result);
+  
+            const fileContentPtr = Module._malloc(fileData.length);
+  
+            Module.writeArrayToMemory(fileData, fileContentPtr);
+            console.log(`writeArrayToMemory [${fileData.length}]`);
+  
+            const size = Module.ccall(
+                              'c_compress',
+                              'number',
+                              ['[number]', 'number'],
+                              [fileContentPtr, fileData.length]);
+            console.log({size});
+  
+            const buffer = Module._malloc(size);
+            Module.ccall(
+              'receiveContent',
+              null,
+              ['[number]', 'number'],
+              [buffer,size],
+            );
+            const content = new Uint8Array(Module.HEAPU8.buffer).slice(buffer, buffer + size);
+  
+            _free(fileContentPtr);
+            _free(buffer);
+           
+            resolve(content);
+          };
+  
+          reader.onerror = function (event) {
+            reject(event.target.error);
+          };
+  
+          reader.readAsArrayBuffer(file);
+        });
       }
-    }
 
-    
-    Module.onRuntimeInitialized = function() {
-      console.log('initialized!');
-    }
-  </script>
+      async function decompress(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            const fileData = new Uint8Array(event.target.result);
+  
+            const fileContentPtr = Module._malloc(fileData.length);
+  
+            Module.writeArrayToMemory(fileData, fileContentPtr);
+            console.log(`writeArrayToMemory [${fileData.length}]`);
+  
+            const size = Module.ccall(
+                              'c_decompress',
+                              'number',
+                              ['[number]', 'number'],
+                              [fileContentPtr, fileData.length]);
+            console.log({size});
+  
+            const buffer = Module._malloc(size);
+            Module.ccall(
+              'collectDecompressedContent',
+              null,
+              ['[number]', 'number'],
+              [buffer,size],
+            );
+            const content = new Uint8Array(Module.HEAPU8.buffer).slice(buffer, buffer + size);
+  
+            _free(fileContentPtr);
+            _free(buffer);
+           
+            resolve(content);
+          };
+  
+          reader.onerror = function (event) {
+            reject(event.target.error);
+          };
+  
+          reader.readAsArrayBuffer(file);
+        });
+      }
+  
+      function downloadFile(data, filename, type) {
+        const blob = new Blob([data], { type: type });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+  
+      async function uploadFileToCompress() {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+  
+        if (file) {
+          try {
+            const fileContent = await compress(file);
+            downloadFile(fileContent, 'compressed_file.zipp', 'application/octet-stream');
+          } catch (error) {
+            console.error('Error getting file content:', error);
+          }
+        } else {
+          alert('Please select a file.');
+        }
+      }
+
+      async function uploadFileToDecompress() {
+        const compressedFileInput = document.getElementById('decompressFileInput');
+        const compressedFile = compressedFileInput.files[0];
+        if (compressedFile) {
+          try {
+            const decompressedFileContent = await decompress(compressedFile);
+            downloadFile(decompressedFileContent, 'your_decompressed_file', 'application/octet-stream');
+          } catch (error) {
+            console.error('failed to decompress:', error);
+          }
+        } else {
+          alert('Please select a file to decompress.');
+        }
+      }
+      
+      Module.onRuntimeInitialized = function() {
+        console.log('initialized!');
+      }
+    </script>
   </body>
 </html>
