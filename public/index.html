@@ -6,26 +6,37 @@
     <title>Zipper</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   </head>
-  <body class="bg-gray-100 h-screen flex items-center justify-center">
-    <div class="w-full lg:w-3/4 xl:w-1/2 flex flex-col lg:flex-row">
-      <!-- Compression Section -->
+  <body class="bg-gray-100 h-screen flex flex-col items-center justify-center font-black">
+    <header class="w-full bg-blue-500 flex justify-between items-center p-8">
+      <p class="text-white"><a href="/">zipper</a></p>
+      <nav>
+        <ul>
+          <li><a title="See Github project" class="hover:underline text-white" target="_blank" href="https://github.com/buarki/zipper">Github</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div class="flex-grow w-full lg:w-3/4 xl:w-1/2 flex flex-col lg:flex-row justify-center items-center">
       <div class="lg:w-1/2 p-3">
-        <h2 class="text-2xl font-bold mb-4">Compression</h2>
+        <h2 class="text-2xl mb-4">Compression</h2>
         <form id="uploadForm" enctype="multipart/form-data" class="mb-4">
           <input type="file" id="fileInput" accept=".txt, .pdf, .jpg, .png, .zip" class="mb-2" />
-          <button type="button" onclick="uploadFileToCompress()" class="bg-blue-500 text-white px-4 py-2 rounded">Compress</button>
+          <button type="button" onclick="uploadFileToCompress()" class="bg-blue-500 hover:bg-blue-300 text-white px-4 py-2 rounded">Compress</button>
         </form>
       </div>
 
-      <!-- Decompression Section -->
       <div class="lg:w-1/2 p-3">
-        <h2 class="text-2xl font-bold mb-4">Decompression</h2>
+        <h2 class="text-2xl mb-4">Decompression</h2>
         <form id="decompressForm" class="mb-4">
           <input type="file" id="decompressFileInput" accept=".zipp" class="mb-2" />
-          <button type="button" onclick="uploadFileToDecompress()" class="bg-green-500 text-white px-4 py-2 rounded">Decompress</button>
+          <button type="button" onclick="uploadFileToDecompress()" class="bg-green-500 hover:bg-green-300 text-white px-4 py-2 rounded">Decompress</button>
         </form>
       </div>
     </div>
+
+    <footer class="text-center p-8">
+      <p class="text-sm text-gray-600">Copyright &copy; 2024 <a class="hover:underline" title="Author website" target="_blank" href="https://www.buarki.com/">buarki.com</a>. All rights reserved.</p>
+    </footer>
 
     <script src="./zipper.js"></script>
     <script>
