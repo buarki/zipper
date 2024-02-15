@@ -1,5 +1,10 @@
 const KB = 1024;
 const MAX_ALLOWED_SIZE = 40 * KB;
+const MILLISECONDS = 1;
+const SECOND = 1000 * MILLISECONDS;
+const ZIPPER_COMPRESSED_FILE_EXTENSION = '.zipp';
+const COMPRESSED_FILE_NAME = `compressed_file${ZIPPER_COMPRESSED_FILE_EXTENSION}`;
+const DECOMPRESSED_FILE_NAME = `your_decompressed_file`;
 
 function validateFileSize(inputId) {
   const input = document.getElementById(inputId);
@@ -21,28 +26,26 @@ async function compress(file) {
       const fileContentPtr = Module._malloc(fileData.length);
 
       Module.writeArrayToMemory(fileData, fileContentPtr);
-      console.log(`writeArrayToMemory [${fileData.length}]`);
 
-      const size = Module.ccall(
+      const compressedContentSize = Module.ccall(
                         'c_compress',
                         'number',
                         ['[number]', 'number'],
                         [fileContentPtr, fileData.length]);
-      console.log({size});
 
-      const buffer = Module._malloc(size);
+      const buffer = Module._malloc(compressedContentSize);
       Module.ccall(
         'receiveContent',
         null,
         ['[number]', 'number'],
-        [buffer,size],
+        [buffer,compressedContentSize],
       );
-      const content = new Uint8Array(Module.HEAPU8.buffer).slice(buffer, buffer + size);
+      const compressedContent = new Uint8Array(Module.HEAPU8.buffer).slice(buffer, buffer + compressedContentSize);
 
       _free(fileContentPtr);
       _free(buffer);
      
-      resolve(content);
+      resolve({ compressedContent, compressedContentSize, originalSize: fileData.length });
     };
 
     reader.onerror = function (event) {
@@ -62,28 +65,26 @@ async function decompress(file) {
       const fileContentPtr = Module._malloc(fileData.length);
 
       Module.writeArrayToMemory(fileData, fileContentPtr);
-      console.log(`writeArrayToMemory [${fileData.length}]`);
 
-      const size = Module.ccall(
+      const decompressedSize = Module.ccall(
                         'c_decompress',
                         'number',
                         ['[number]', 'number'],
                         [fileContentPtr, fileData.length]);
-      console.log({size});
 
-      const buffer = Module._malloc(size);
+      const buffer = Module._malloc(decompressedSize);
       Module.ccall(
         'collectDecompressedContent',
         null,
         ['[number]', 'number'],
-        [buffer,size],
+        [buffer,decompressedSize],
       );
-      const content = new Uint8Array(Module.HEAPU8.buffer).slice(buffer, buffer + size);
+      const decompressedContent = new Uint8Array(Module.HEAPU8.buffer).slice(buffer, buffer + decompressedSize);
 
       _free(fileContentPtr);
       _free(buffer);
      
-      resolve(content);
+      resolve({ decompressedContent, decompressedSize });
     };
 
     reader.onerror = function (event) {
@@ -107,13 +108,16 @@ function downloadFile(data, filename, type) {
 }
 
 async function uploadFileToCompress() {
+  const feedbackCard = document.getElementById('notificationCard');
   const fileInput = document.getElementById('fileInput');
   const file = fileInput.files[0];
 
   if (file) {
     try {
-      const fileContent = await compress(file);
-      downloadFile(fileContent, 'compressed_file.zipp', 'application/octet-stream');
+      const { compressedContent, compressedContentSize, originalSize } = await compress(file);
+      downloadFile(compressedContent, COMPRESSED_FILE_NAME, 'application/octet-stream');
+      const { feedbackMessage, textColor } = getCompressionFeedback(originalSize, compressedContentSize);
+      showNotificationCard(feedbackMessage, textColor, feedbackCard);
     } catch (error) {
       console.error('Error getting file content:', error);
     }
@@ -127,8 +131,8 @@ async function uploadFileToDecompress() {
   const compressedFile = compressedFileInput.files[0];
   if (compressedFile) {
     try {
-      const decompressedFileContent = await decompress(compressedFile);
-      downloadFile(decompressedFileContent, 'your_decompressed_file', 'application/octet-stream');
+      const { decompressedContent } = await decompress(compressedFile);
+      downloadFile(decompressedContent, DECOMPRESSED_FILE_NAME, 'application/octet-stream');
     } catch (error) {
       console.error('failed to decompress:', error);
     }
@@ -137,6 +141,27 @@ async function uploadFileToDecompress() {
   }
 }
 
-Module.onRuntimeInitialized = function() {
-  console.log('initialized!');
+Module.onRuntimeInitialized = function() {}
+
+function getCompressionFeedback(originalSize, compressedSize) {
+  const compressionWasEffective = compressedSize < originalSize;
+  return {
+    feedbackMessage: `Original Size: ${originalSize} bytes\nCompressed size: ${compressedSize} bytes\n${compressionWasEffective ? 'The compression was effective :)' : 'The compression was not effective :('}`,
+    textColor: compressionWasEffective ? 'bg-green-500' : 'bg-red-500',
+  };
+}
+
+function showNotificationCard(message, textColor, cardElement) {
+  const timeVisible = 6 * SECOND;
+
+  cardElement.innerText = message;
+  cardElement.classList.add(textColor);
+  cardElement.style.display = 'block';
+  cardElement.offsetWidth;
+  cardElement.style.opacity = 1;
+
+  setTimeout(() => {
+    cardElement.classList.remove(textColor);
+    cardElement.style.display = 'none';
+  }, timeVisible);
 }
