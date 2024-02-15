@@ -29,7 +29,7 @@ void testComputeCompressedFileSymbolsLength(
   assert(tree != NULL);
 
   unsigned char **table = buildSymbolCodesFromTree(tree);
-  printHuffmanTable(table);
+  TEST_VERBOSE printHuffmanTable(table);
   assert(table != NULL);
 
   size_t compressedFileSymbolsLength = computeCompressedFileSymbolsLength(table, bytesFrequency);
@@ -47,7 +47,7 @@ int main() {
   size_t expectedBytes1 = 16;
   testComputeCompressedFileSymbolsLength(fileContent1, fileSize1, expectedBytes1);
 
-  printf("---------\n");
+  TEST_VERBOSE printf("---------\n");
 
   unsigned char fileContent2[] = "aabbc";
   size_t fileSize2 = 5;

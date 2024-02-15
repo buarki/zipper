@@ -17,7 +17,7 @@ void testCompression(
   CompressionResult *result = compress(fileContent, fileSize);
   assert(result != NULL);
 
-  printf("result->size [%ld]\n", result->size);
+  TEST_VERBOSE printf("result->size [%ld]\n", result->size);
   assert(result->size == expectedSize);
   for (int i = 0; i < result->size; i++) {
     TEST_VERBOSE printf("[%d] <--> [%d]\n", result->bytes[i], expectedSymbols[i]);
@@ -41,7 +41,7 @@ int main() {
   };
   testCompression(fileContent1, fileSize1, compressedFile1, expectedSize1);
 
-  printf("--------------\n");
+  TEST_VERBOSE printf("--------------\n");
 
 
   size_t fileSize2 = 3;
@@ -72,7 +72,7 @@ int main() {
     '3',
     '2'
   };
-  printf("content: [%s]\n", fileContent3);
+  TEST_VERBOSE printf("content: [%s]\n", fileContent3);
   size_t expectedSize3 = 21;
   unsigned char compressedFile3[expectedSize3] = {
     // header content

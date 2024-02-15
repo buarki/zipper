@@ -27,13 +27,13 @@ int main() {
   size_t expectedBytes1 = 1;
   testcomputeRequiredBytesForEncodedSymbols(lengthOfBytesWithItsFrequencies1, expectedBytes1);
 
-  printf("---------\n");
+  TEST_VERBOSE printf("---------\n");
 
   size_t lengthOfBytesWithItsFrequencies2 = 3;
   size_t expectedBytes2 = 1;
   testcomputeRequiredBytesForEncodedSymbols(lengthOfBytesWithItsFrequencies2, expectedBytes2);
 
-  printf("---------\n");
+  TEST_VERBOSE printf("---------\n");
 
   size_t lengthOfBytesWithItsFrequencies3 = 9;
   size_t expectedBytes3 = 2;

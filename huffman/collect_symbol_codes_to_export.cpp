@@ -13,6 +13,7 @@ unsigned char *collectSymbolCodesToExport(
 ) {
   unsigned char *symbolsToExport = (unsigned char*) calloc(encodedSymbolCodesSize, sizeof(unsigned char));
   if (symbolsToExport == NULL) {
+    fprintf(stderr, "failed to allocate space for encoded symbols at file %s:%d\n", __FILE__, __LINE__);
     return NULL;
   }
   size_t symbolsToExportIndex = 0;

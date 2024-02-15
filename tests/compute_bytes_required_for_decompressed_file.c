@@ -29,11 +29,11 @@ void testComputeBytesRequiredForDecompressedFile(
 
   HuffmanNode *tree = buildHuffmanTreeFromMinHeap(minHeap);
   assert(tree != NULL);
-  traverseAndPrint(tree, PRE_ORDER);
+  TEST_VERBOSE traverseAndPrint(tree, PRE_ORDER);
 
   unsigned char **tableCodes = buildSymbolCodesFromTree(tree);
   assert(tableCodes != NULL);
-  printHuffmanTable(tableCodes);
+  TEST_VERBOSE printHuffmanTable(tableCodes);
 
   uint16_t treeContentSize = computeRequiredBytesForTreeContent(tree);
   size_t compressedFileSymbolsLength = computeCompressedFileSymbolsLength(tableCodes, bytesFrequency);

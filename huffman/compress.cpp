@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-
 #include <stdio.h>
 
 #include "build_huffman_tree_from_min_heap.h"
@@ -62,6 +61,7 @@ CompressionResult *compress(unsigned char *fileContent, size_t fileContentSize) 
   compressionResult->size = HEADER_REQUIRED_BYTES + treeContentSize + encodedSymbolCodesSize;
   compressionResult->bytes = (unsigned char*) calloc(compressionResult->size, sizeof(unsigned char));
   if (compressionResult->bytes == NULL) {
+    fprintf(stderr, "failed to allocate space compressed content at file %s:%d\n", __FILE__, __LINE__);
     destroyHeader(header);
     destroyHuffmanTable(tableCodes);
     destroyHuffmanNode(tree);
