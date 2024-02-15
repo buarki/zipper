@@ -124,7 +124,6 @@ void testCompressionAndDecompression(
 void testDecompression(const char *originalFile, const char *compressedFile, const char *tempFile) {
   SampleFile fileToDecompress = loadSampleFile(compressedFile);
   DecompressionResult *decompressionResult = decompress(fileToDecompress.content, fileToDecompress.size);
-  printf("aaa\n");
   if (decompressionResult == NULL) {
     free(fileToDecompress.content);
     exit(1);

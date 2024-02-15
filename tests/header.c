@@ -37,7 +37,7 @@ void testCreateHeader1() {
   Header *header = createHeader(treeSize, paddingBitsRequiredForEncodedSymbols);
   assert(header != NULL);
 
-  printf("padding: [%d], tree size: [%d]\n", header->info->paddingBitsForEncodedSymbols, header->info->treeContentSize);
+  TEST_VERBOSE printf("padding: [%d], tree size: [%d]\n", header->info->paddingBitsForEncodedSymbols, header->info->treeContentSize);
 
   assert(header->info->paddingBitsForEncodedSymbols == expectedPaddingBits);
   assert(header->info->treeContentSize == treeSize);

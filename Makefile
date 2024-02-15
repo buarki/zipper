@@ -70,6 +70,16 @@ test_compute_padding_bits_for_compressed_codes:
 	./compute_padding_bits_for_compressed_codes
 	rm compute_padding_bits_for_compressed_codes
 
+test_build_huffman_tree_from_compressed_file:
+	g++ -o build_huffman_tree_from_compressed_file tests/build_huffman_tree_from_compressed_file.c huffman/*.cpp
+	./build_huffman_tree_from_compressed_file
+	rm build_huffman_tree_from_compressed_file
+
+test_build_decompressed_file:
+	g++ -o build_decompressed_file tests/build_decompressed_file.c huffman/*.cpp
+	./build_decompressed_file
+	rm build_decompressed_file
+
 test_decompress:
 	g++ -o decompress tests/decompress.c huffman/*.cpp
 	./decompress
@@ -85,5 +95,5 @@ test_integration:
 	./integration
 	rm integration
 
-test: test_collect_bytes_frequency test_huffman_tree test_min_heap test_build_min_heap_from_bytes_frequency test_build_huffman_tree_from_min_heap test_build_symbol_codes_from_tree test_header test_compute_required_bytes_for_encoded_symbols test_collect_symbol_codes_to_export test_compress test_compute_compressed_file_symbols_length test_compute_padding_bits_for_compressed_codes test_decompress test_compute_bytes_required_for_decompressed_file test_integration
+test: test_collect_bytes_frequency test_huffman_tree test_min_heap test_build_min_heap_from_bytes_frequency test_build_huffman_tree_from_min_heap test_build_symbol_codes_from_tree test_header test_compute_required_bytes_for_encoded_symbols test_collect_symbol_codes_to_export test_compress test_compute_compressed_file_symbols_length test_compute_padding_bits_for_compressed_codes test_decompress test_compute_bytes_required_for_decompressed_file test_integration test_build_huffman_tree_from_compressed_file test_build_decompressed_file
 	echo "All tests successfully finished!"

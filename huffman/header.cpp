@@ -10,10 +10,12 @@ unsigned char *getHeaderContent(uint16_t treeContentSize, uint16_t paddingBitsRe
 Header *createHeader(uint16_t treeContentSize, uint16_t paddingBitsRequiredForEncodedSymbols) {
   Header *header = (Header*) malloc(sizeof(Header));
   if (header == NULL) {
+    fprintf(stderr, "failed to allocate space for header at file %s:%d\n", __FILE__, __LINE__);
     return NULL;
   }
   HeaderInfo *info = (HeaderInfo*) malloc(sizeof(HeaderInfo));
   if (info == NULL) {
+    fprintf(stderr, "failed to allocate space for header info at file %s:%d\n", __FILE__, __LINE__);
     free(header);
     return NULL;
   }
@@ -41,6 +43,7 @@ void destroyHeader(Header *header) {
 HeaderInfo *getHeaderInfo(unsigned char *compressedFileContent) {
   HeaderInfo *info = (HeaderInfo*) malloc(sizeof(HeaderInfo));
   if (info == NULL) {
+    fprintf(stderr, "failed to allocate space for header info at file %s:%d\n", __FILE__, __LINE__);
     return NULL;
   }
   info->paddingBitsForEncodedSymbols = compressedFileContent[0] >> 5;
@@ -56,6 +59,7 @@ unsigned char *getHeaderContent(uint16_t treeContentSize, uint16_t paddingBitsRe
   unsigned char leastSignificantBitsOfTreeSize = treeContentSize & 0b11111111;
   unsigned char *bytes = (unsigned char*) calloc(HEADER_REQUIRED_BYTES, sizeof(unsigned char));
   if (bytes == NULL) {
+    fprintf(stderr, "failed to allocate space for header content at file %s:%d\n", __FILE__, __LINE__);
     return NULL;
   }
   bytes[0] = paddingBitsAs3MostSignificantBits | mostSignificantBitsOfTreeSize;

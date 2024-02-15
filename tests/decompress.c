@@ -41,7 +41,7 @@ int main() {
   unsigned char expectedDecompressedFile1[expectedDecompressedFileSize1] = {'a', 'a', 'b'};
   testDecompression(compressedFileContent1, compressedFileSize1, expectedDecompressedFile1, expectedDecompressedFileSize1);
 
-  printf("--------------\n");
+  TEST_VERBOSE printf("--------------\n");
 
 
   size_t compressedFileSize2 = 8;
@@ -59,7 +59,7 @@ int main() {
   unsigned char expectedDecompressedFile2[expectedDecompressedFileSize2] = {JOINING_SYMBOL, JOINING_SYMBOL, ESCAPING_SYMBOL};
   testDecompression(compressedFileContent2, compressedFileSize2, expectedDecompressedFile2, expectedDecompressedFileSize2);
 
-  printf("--------------\n");
+  TEST_VERBOSE printf("--------------\n");
 
   size_t compressedFileSize3 = 21;
   unsigned char compressedFileContent3[compressedFileSize3] = {

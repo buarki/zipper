@@ -21,7 +21,7 @@ int main() {
   size_t expectedPaddingBits1 = 8;
   testComputePadingBitsForCompressedCode(lengthOfBytesWithItsFrequencies1, expectedPaddingBits1);
 
-  printf("---------\n");
+  TEST_VERBOSE printf("---------\n");
 
   size_t lengthOfBytesWithItsFrequencies2 = 9;
   size_t expectedPaddingBits2 = 7;
