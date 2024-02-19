@@ -3,6 +3,7 @@ wasm:
 			 -s WASM=1 \
 			 -s EXPORTED_FUNCTIONS="[_receiveContent, _c_compress, _c_decompress, _collectDecompressedContent, _free, _malloc]" \
 			 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap', 'UTF8ToString', 'writeArrayToMemory', 'getValue']" \
+			 -s INITIAL_MEMORY=200mb \
 			 -o zipper.js || exit 1
 	mv zipper.js public/zipper.js
 	mv zipper.wasm public/zipper.wasm

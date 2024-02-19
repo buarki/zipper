@@ -22,6 +22,11 @@ unsigned char **buildSymbolCodesFromTree(HuffmanNode *tree) {
     table[i] = (unsigned char*) calloc(ASCII_SYMBOLS, sizeof(unsigned char));
   }
   unsigned char *symbolCodeBuilt = (unsigned char*) calloc(ASCII_SYMBOLS, sizeof(unsigned char));
+  if (symbolCodeBuilt == NULL) {
+    fprintf(stderr, "failed to allocate space for compressed codes buffer at file %s:%d\n", __FILE__, __LINE__);
+    destroyHuffmanTable(table);
+    return NULL; 
+  }
   size_t symbolCodeBuiltIndex = 0;
   buildSymbolCodesFromTreeUtil(table, tree, symbolCodeBuilt, symbolCodeBuiltIndex);
   free(symbolCodeBuilt);
@@ -38,7 +43,7 @@ void destroyHuffmanTable(unsigned char **table) {
 void printHuffmanTable(unsigned char **table) {
   for (int i = 0; i < ASCII_SYMBOLS; i++) {
     if (table[i][0] != '\0') {
-      printf("[%c]->[%s]\n", i, table[i]);
+      printf("[%d]->[%s]\n", i, table[i]);
     }
   }
 }

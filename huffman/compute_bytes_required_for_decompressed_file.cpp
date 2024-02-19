@@ -11,10 +11,6 @@ size_t computeBytesRequiredForDecompressedFile(
   size_t compressedSymbolsSize,
   uint8_t paddingBits
 ) {
-  if (compressedSymbols == NULL || compressedSymbolsSize == 0) {
-    printf("INVALID PARAMS\n");
-    return -1;
-  }
   HuffmanNode *currentNode = root;
   size_t requiredBytes = 0;
   size_t compressedSymbolsIndex = 0;

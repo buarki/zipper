@@ -9,5 +9,4 @@ size_t computeRequiredBytesForEncodedSymbols(size_t lengthOfBytesWithItsFrequenc
   size_t requiredBytes = lengthOfBytesWithItsFrequencies / byte;
   bool fullContentRequiresOneExtraByte = lengthOfBytesWithItsFrequencies % byte != 0;
   return fullContentRequiresOneExtraByte ? requiredBytes + 1 : requiredBytes;
-  return requiredBytes;
 }
