@@ -7,6 +7,9 @@ const ZIPPER_COMPRESSED_FILE_EXTENSION = '.zipp';
 const COMPRESSED_FILE_NAME = `compressed_file${ZIPPER_COMPRESSED_FILE_EXTENSION}`;
 const DECOMPRESSED_FILE_NAME = `your_decompressed_file`;
 
+const LOADING = (color = 'border-blue-500') =>
+        `<div class="animate-spin h-5 w-5 border-t-4 ${color} border-solid rounded-full"></div>`;
+
 function validateFileSize(inputId) {
   const input = document.getElementById(inputId);
   if (input.files && input.files[0]) {
@@ -111,9 +114,12 @@ function downloadFile(data, filename, type) {
 async function uploadFileToCompress() {
   const feedbackCard = document.getElementById('notificationCard');
   const fileInput = document.getElementById('fileInput');
+  const compressButton = document.getElementById('compressButton');
   const file = fileInput.files[0];
 
   if (file) {
+    compressButton.disabled = true;
+    compressButton.innerHTML = LOADING('bg-blue-500');
     try {
       const { compressedContent, compressedContentSize, originalSize } = await compress(file);
       downloadFile(compressedContent, COMPRESSED_FILE_NAME, 'application/octet-stream');
@@ -121,6 +127,9 @@ async function uploadFileToCompress() {
       showNotificationCard(feedbackMessage, textColor, feedbackCard);
     } catch (error) {
       console.error('Error getting file content:', error);
+    } finally {
+      compressButton.innerHTML = 'Compress';
+      compressButton.disabled = false;
     }
   } else {
     alert('Please select a file.');
@@ -129,13 +138,19 @@ async function uploadFileToCompress() {
 
 async function uploadFileToDecompress() {
   const compressedFileInput = document.getElementById('decompressFileInput');
+  const decompressButton = document.getElementById('decompressButton');
   const compressedFile = compressedFileInput.files[0];
   if (compressedFile) {
+    decompressButton.disabled = true;
+    decompressButton.innerHTML = LOADING('bg-green-500');
     try {
       const { decompressedContent } = await decompress(compressedFile);
       downloadFile(decompressedContent, DECOMPRESSED_FILE_NAME, 'application/octet-stream');
     } catch (error) {
       console.error('failed to decompress:', error);
+    } finally {
+      decompressButton.disabled = false;
+      decompressButton.innerHTML = `Decompress`;
     }
   } else {
     alert('Please select a file to decompress.');

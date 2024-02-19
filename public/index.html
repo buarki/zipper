@@ -35,7 +35,7 @@
         <form id="uploadForm" enctype="multipart/form-data" class="mb-4">
           <label for="fileInput" class="form-label">Select file to compress (Max 150MB):</label>
           <input type="file" id="fileInput" accept=".txt, .pdf, .jpg, .png, .zip" class="mb-2" onchange="validateFileSize('fileInput')" />
-          <button type="button" onclick="uploadFileToCompress()" class="bg-blue-500 hover:bg-blue-300 text-white px-4 py-2 rounded">Compress</button>
+          <button id="compressButton" type="button" onclick="uploadFileToCompress()" class="bg-blue-500 hover:bg-blue-300 text-white px-4 py-2 rounded">Compress</button>
         </form>
       </div>
 
@@ -44,7 +44,7 @@
         <form id="decompressForm" class="mb-4">
           <label for="fileInput" class="form-label">Select file to decompress:</label>
           <input type="file" id="decompressFileInput" accept=".zipp" class="mb-2" />
-          <button type="button" onclick="uploadFileToDecompress()" class="bg-green-500 hover:bg-green-300 text-white px-4 py-2 rounded">Decompress</button>
+          <button id="decompressButton" type="button" onclick="uploadFileToDecompress()" class="bg-green-500 hover:bg-green-300 text-white px-4 py-2 rounded">Decompress</button>
         </form>
       </div>
     </div>
