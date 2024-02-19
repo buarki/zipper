@@ -95,19 +95,19 @@ void traverseAndPrintHelper(HuffmanNode *root, TraversalOrder order) {
   }
   switch (order) {
     case PRE_ORDER:
-      printf("(%c, %ld) ", root->byte, root->frequency);
+      printf("(%d, %ld) ", root->byte, root->frequency);
       traverseAndPrintHelper(root->left, order);
       traverseAndPrintHelper(root->right, order);
       break;
     case IN_ORDER:
       traverseAndPrintHelper(root->left, order);
-      printf("(%c, %ld) ", root->byte, root->frequency);
+      printf("(%d, %ld) ", root->byte, root->frequency);
       traverseAndPrintHelper(root->right, order);
       break;
     case POST_ORDER:
       traverseAndPrintHelper(root->left, order);
       traverseAndPrintHelper(root->right, order);
-      printf("(%c, %ld) ", root->byte, root->frequency);
+      printf("(%d, %ld) ", root->byte, root->frequency);
       break;
   }
 }

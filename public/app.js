@@ -1,5 +1,6 @@
 const KB = 1024;
-const MAX_ALLOWED_SIZE = 40 * KB;
+const MB = 1024 * KB;
+const MAX_ALLOWED_SIZE = 150 * MB; // We compile wasm allowing 200MB, so allowing 150MB is ok :)
 const MILLISECONDS = 1;
 const SECOND = 1000 * MILLISECONDS;
 const ZIPPER_COMPRESSED_FILE_EXTENSION = '.zipp';
@@ -10,7 +11,7 @@ function validateFileSize(inputId) {
   const input = document.getElementById(inputId);
   if (input.files && input.files[0]) {
     if (input.files[0].size > MAX_ALLOWED_SIZE) {
-      alert("File size exceeds the maximum allowed one (40KB). Please choose a smaller file.");
+      alert("File size exceeds the maximum allowed one (150MB). Please choose a smaller file.");
       input.value = '';
       return;
     }

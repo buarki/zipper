@@ -17,29 +17,31 @@ unsigned char *buildDecompressedFile(
     fprintf(stderr, "failed to allocate space for decompressed file content at file %s:%d\n", __FILE__, __LINE__);
     return NULL;
   }
-  HuffmanNode *currentNode = root;
   size_t decompressedContentIndex = 0;
+  HuffmanNode *currentNode = root;
+  size_t requiredBytes = 0;
   size_t compressedSymbolsIndex = 0;
   unsigned char currentByte = compressedSymbols[compressedSymbolsIndex++];
-  while (decompressedContentIndex < decompressedFileSize) {
-    for (int8_t byteIndex = 7; byteIndex >= 0; --byteIndex) {
-      if (currentNode->left == NULL && currentNode->right == NULL) {
-        decompressedContent[decompressedContentIndex++] = currentNode->byte;
-        if (decompressedContentIndex == decompressedFileSize) {
-          break;
-        }
+  while (compressedSymbolsIndex < compressedSymbolsSize) {
+    for (int8_t byteIndex = 7; byteIndex >= 0; byteIndex--) {
+      bool reachedLeaf = currentNode->left == NULL && currentNode->right == NULL;
+      if (reachedLeaf) {
+        decompressedContent[decompressedContentIndex++] = currentNode->byte;;
         currentNode = root;
       }
-      currentNode = (currentByte >> byteIndex) & 1 ? currentNode->right : currentNode->left;
+      bool currentByteBitIsSet = (currentByte >> byteIndex) & 1;
+      currentNode = currentByteBitIsSet ? currentNode->right : currentNode->left;
     }
     currentByte = compressedSymbols[compressedSymbolsIndex++];
   }
-  for (int8_t byteIndex = 7; paddingBits > 0; --paddingBits, --byteIndex) {
-    if (currentNode->left == NULL && currentNode->right == NULL) {
-      decompressedContent[decompressedContentIndex++] = currentNode->byte;
+  for (int8_t byteIndex = 7; byteIndex >= (paddingBits == 8 ? -1 : paddingBits - 1); --byteIndex)  {
+    bool reachedLeaf = currentNode->left == NULL && currentNode->right == NULL;
+    if (reachedLeaf) {
+      decompressedContent[decompressedContentIndex++] = currentNode->byte;;
       currentNode = root;
     }
-    currentNode = (currentByte >> byteIndex) & 1 ? currentNode->right : currentNode->left;
+    bool currentByteBitIsSet = (currentByte >> byteIndex) & 1;
+    currentNode = currentByteBitIsSet ? currentNode->right : currentNode->left;
   }
   return decompressedContent;
 }

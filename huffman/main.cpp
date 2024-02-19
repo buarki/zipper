@@ -30,6 +30,12 @@ uint32_t c_decompress(unsigned char *compressedFileContent, size_t compressedFil
     fprintf(stderr, "failed to decompress at file %s:%d\n", __FILE__, __LINE__);
     return -1;
   }
+  decompressedContent = (unsigned char*) calloc(decompressionResult->size, sizeof(unsigned char));
+  if (decompressedContent == NULL) {
+    fprintf(stderr, "failed to allocate space for decompressed file buffer at file %s:%d\n", __FILE__, __LINE__);
+    destroyDecompressionResult(decompressionResult);
+    return -1;
+  }
   memcpy(decompressedContent, decompressionResult->bytes, decompressionResult->size);
   decompressedSize = decompressionResult->size;
   destroyDecompressionResult(decompressionResult);
@@ -50,6 +56,12 @@ uint32_t c_compress(unsigned char *fileContent, size_t fileContentSize) {
   CompressionResult *result = compress(fileContent, fileContentSize);
   if (result == NULL) {
     fprintf(stderr, "failed to compress at file %s:%d\n", __FILE__, __LINE__);
+    return -1;
+  }
+  content = (unsigned char*) calloc(result->size, sizeof(unsigned char));
+  if (content == NULL) {
+    fprintf(stderr, "failed to allocate space for compressed file buffer at file %s:%d\n", __FILE__, __LINE__);
+    destroyCompressionResult(result);
     return -1;
   }
   memcpy(content, result->bytes, result->size);

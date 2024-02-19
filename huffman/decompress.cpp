@@ -11,6 +11,14 @@
 #include "build_decompressed_file.h"
 
 DecompressionResult *decompress(unsigned char *compressedContent, size_t compressedContentSize) {
+  if (compressedContent == NULL) {
+    fprintf(stderr, "compressed content buffer is null at file %s:%d\n", __FILE__, __LINE__);
+    return NULL;
+  }
+  if (compressedContentSize == 0) {
+    fprintf(stderr, "compressed content size must > 0 at file %s:%d\n", __FILE__, __LINE__);
+    return NULL;
+  }
   DecompressionResult *result = (DecompressionResult*) malloc(sizeof(DecompressionResult));
   if (result == NULL) {
     fprintf(stderr, "failed to allocate space decompression result at file %s:%d\n", __FILE__, __LINE__);

@@ -7,7 +7,7 @@
 size_t *collectBytesFrequency(unsigned char *fileContent, size_t fileSize) {
   size_t *bytesFrequency = (size_t*) calloc(ASCII_SYMBOLS, sizeof(size_t));
   if (bytesFrequency == NULL) {
-    fprintf(stderr, "collectBytesFrequency(): failed to allocate memory for bytes frequency\n");
+    fprintf(stderr, "collectBytesFrequency(): failed to allocate memory for bytes frequency at file %s:%d\n", __FILE__, __LINE__);
     return NULL;
   }
   for (size_t i = 0; i < fileSize; i++) {

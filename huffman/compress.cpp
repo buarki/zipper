@@ -47,7 +47,7 @@ CompressionResult *compress(unsigned char *fileContent, size_t fileContentSize) 
   }
   uint16_t treeContentSize = computeRequiredBytesForTreeContent(tree);
   size_t compressedFileSymbolsLength = computeCompressedFileSymbolsLength(tableCodes, bytesFrequency);
-  uint16_t encodedSymbolCodesSize = computeRequiredBytesForEncodedSymbols(compressedFileSymbolsLength);
+  size_t encodedSymbolCodesSize = computeRequiredBytesForEncodedSymbols(compressedFileSymbolsLength);
   uint16_t paddingBitsRequiredForEncodedSymbols = computePadingBitsForCompressedCode(compressedFileSymbolsLength);
   Header *header = createHeader(treeContentSize, paddingBitsRequiredForEncodedSymbols);
   if (header == NULL) {
