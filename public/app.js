@@ -162,8 +162,8 @@ Module.onRuntimeInitialized = function() {}
 function getCompressionFeedback(originalSize, compressedSize) {
   const compressionWasEffective = compressedSize < originalSize;
   return {
-    feedbackMessage: `Original Size: ${originalSize} bytes\nCompressed size: ${compressedSize} bytes\n${compressionWasEffective ? 'The compression was effective :)' : 'The compression was not effective :('}`,
-    textColor: compressionWasEffective ? 'bg-green-500' : 'bg-red-500',
+    feedbackMessage: compressionWasEffective ? `Compressed file is ${((1 - (compressedSize / originalSize)) * 100).toFixed(2)}% smaller :)` : `Compressed file is bigger than original ;-;`,  
+    textColor: compressionWasEffective ? 'bg-green-500' : 'bg-yellow-500',
   };
 }
 
