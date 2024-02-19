@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdint.h>
 
 #include "file_util.c"
 
 #include "../huffman/compress.h"
 #include "../huffman/decompress.h"
 
-bool filesAreEqual(const char *file1Path, const char *file2Path) {
+uint8_t filesAreEqual(const char *file1Path, const char *file2Path) {
   FILE *file1 = fopen(file1Path, "rb");
   if (file1 == NULL) {
     perror("error opening file1");

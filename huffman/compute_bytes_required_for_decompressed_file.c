@@ -17,23 +17,23 @@ size_t computeBytesRequiredForDecompressedFile(
   unsigned char currentByte = compressedSymbols[compressedSymbolsIndex++];
   while (compressedSymbolsIndex < compressedSymbolsSize) {
     for (int8_t byteIndex = 7; byteIndex >= 0; byteIndex--) {
-      bool reachedLeaf = currentNode->left == NULL && currentNode->right == NULL;
+      uint8_t reachedLeaf = currentNode->left == NULL && currentNode->right == NULL;
       if (reachedLeaf) {
         requiredBytes++;
         currentNode = root;
       }
-      bool currentByteBitIsSet = (currentByte >> byteIndex) & 1;
+      uint8_t currentByteBitIsSet = (currentByte >> byteIndex) & 1;
       currentNode = currentByteBitIsSet ? currentNode->right : currentNode->left;
     }
     currentByte = compressedSymbols[compressedSymbolsIndex++];
   }
   for (int8_t byteIndex = 7; byteIndex >= (paddingBits == 8 ? -1 : paddingBits - 1); --byteIndex)  {
-    bool reachedLeaf = currentNode->left == NULL && currentNode->right == NULL;
+    uint8_t reachedLeaf = currentNode->left == NULL && currentNode->right == NULL;
     if (reachedLeaf) {
       requiredBytes++;
       currentNode = root;
     }
-    bool currentByteBitIsSet = (currentByte >> byteIndex) & 1;
+    uint8_t currentByteBitIsSet = (currentByte >> byteIndex) & 1;
     currentNode = currentByteBitIsSet ? currentNode->right : currentNode->left;
   }
   return requiredBytes;

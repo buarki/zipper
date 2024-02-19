@@ -47,14 +47,14 @@ enum TraversalOrder {
   POST_ORDER,
 };
 
-void traverseAndPrint(HuffmanNode *node, TraversalOrder order);
+void traverseAndPrint(HuffmanNode *node, enum TraversalOrder order);
 
 typedef struct {
   unsigned char byte;
   int frequency;
 } ByteFrequencyPair;
 
-ByteFrequencyPair *traverseAndCollectByteFrequencyPair(HuffmanNode *root, TraversalOrder order, size_t *amountOfNodes);
+ByteFrequencyPair *traverseAndCollectByteFrequencyPair(HuffmanNode *root, enum TraversalOrder order, size_t *amountOfNodes);
 
 void destroyBytesWithItsFrequencies(ByteFrequencyPair *collectedNodes);
 
