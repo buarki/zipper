@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "build_symbol_codes_from_tree.h"
 #include "consts.h"
@@ -54,7 +55,7 @@ void buildSymbolCodesFromTreeUtil(
   unsigned char *leafPathCreatedSoFar,
   size_t leafPathCreatedSoFarIndex
 ) {
-  bool currentNodeIsALeaf = tree->left == NULL && tree->right == NULL;
+  uint8_t currentNodeIsALeaf = tree->left == NULL && tree->right == NULL;
   if (currentNodeIsALeaf) {
     leafPathCreatedSoFar[leafPathCreatedSoFarIndex] = '\0';
     unsigned char currentLeafSymbol = tree->byte;

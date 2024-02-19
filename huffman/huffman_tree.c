@@ -5,8 +5,8 @@
 #include "huffman_tree.h"
 #include "consts.h"
 
-void traverseAndPrintHelper(HuffmanNode *root, TraversalOrder order);
-void collectNodes(HuffmanNode *root, ByteFrequencyPair *pairArray, size_t *index, TraversalOrder order);
+void traverseAndPrintHelper(HuffmanNode *root, enum TraversalOrder order);
+void collectNodes(HuffmanNode *root, ByteFrequencyPair *pairArray, size_t *index, enum TraversalOrder order);
 size_t countNodes(HuffmanNode *root);
 void computeRequiredBytesForTreeContentUtil(HuffmanNode *node, uint16_t *requiredBytes) ;
 void fillTreeContentBufferUtil(HuffmanNode *node, unsigned char *treeContentBuffer, size_t *treeContentBufferIndex);
@@ -49,7 +49,7 @@ unsigned char *collectTreeSymbolsToExport(HuffmanNode *root) {
   return treeContentBuffer;
 }
 
-void traverseAndPrint(HuffmanNode *root, TraversalOrder order) {
+void traverseAndPrint(HuffmanNode *root, enum TraversalOrder order) {
   printf("Huffman Tree contents (Traversal Order: ");
   switch (order) {
     case PRE_ORDER:
@@ -69,7 +69,7 @@ void traverseAndPrint(HuffmanNode *root, TraversalOrder order) {
   printf("\n");
 }
 
-ByteFrequencyPair *traverseAndCollectByteFrequencyPair(HuffmanNode *root, TraversalOrder order, size_t *amountOfNodes) {
+ByteFrequencyPair *traverseAndCollectByteFrequencyPair(HuffmanNode *root, enum TraversalOrder order, size_t *amountOfNodes) {
   size_t totalNodes = countNodes(root);
   ByteFrequencyPair *pairArray = (ByteFrequencyPair*) malloc(totalNodes * sizeof(ByteFrequencyPair));
   if (pairArray == NULL) {
@@ -89,7 +89,7 @@ void destroyBytesWithItsFrequencies(ByteFrequencyPair *collectedNodes) {
 }
 
 // Implementation of helper functions
-void traverseAndPrintHelper(HuffmanNode *root, TraversalOrder order) {
+void traverseAndPrintHelper(HuffmanNode *root, enum TraversalOrder order) {
   if (root == NULL) {
     return;
   }
@@ -116,7 +116,7 @@ void collectNodes(
   HuffmanNode *root,
   ByteFrequencyPair *pairArray,
   size_t *index,
-  TraversalOrder order
+  enum TraversalOrder order
 ) {
   if (root == NULL) {
     return;
@@ -148,7 +148,7 @@ size_t countNodes(HuffmanNode *root) {
 }
 
 void computeRequiredBytesForTreeContentUtil(HuffmanNode *node, uint16_t *requiredBytes) {
-  bool currentNodeIsALeaf = node->left == NULL && node->right == NULL;
+  uint8_t currentNodeIsALeaf = node->left == NULL && node->right == NULL;
   if (currentNodeIsALeaf) {
     if (node->byte == ESCAPING_SYMBOL || node->byte == JOINING_SYMBOL) {
       (*requiredBytes)++;
@@ -166,7 +166,7 @@ void computeRequiredBytesForTreeContentUtil(HuffmanNode *node, uint16_t *require
 }
 
 void fillTreeContentBufferUtil(HuffmanNode *node, unsigned char *treeContentBuffer, size_t *treeContentBufferIndex) {
-  bool currentNodeIsALeaf = node->left == NULL && node->right == NULL;
+  uint8_t currentNodeIsALeaf = node->left == NULL && node->right == NULL;
   if (currentNodeIsALeaf) {
     if (node->byte == ESCAPING_SYMBOL || node->byte == JOINING_SYMBOL) {
       treeContentBuffer[(*treeContentBufferIndex)++] = ESCAPING_SYMBOL;

@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include <emscripten/emscripten.h>
+
 #include "compress.h"
 #include "decompress.h"
 
@@ -12,14 +14,7 @@ uint32_t size;
 unsigned char *decompressedContent;
 uint32_t decompressedSize;
 
-extern "C" {
-  uint32_t c_compress(unsigned char *fileContent, size_t fileContentSize);
-  void receiveContent(unsigned char *buffer, size_t bufferSize);
-
-  uint32_t c_decompress(unsigned char *compressedFileContent, size_t compressedFileContentSize);
-  void collectDecompressedContent(unsigned char *buffer, size_t bufferSize);
-}
-
+EMSCRIPTEN_KEEPALIVE
 uint32_t c_decompress(unsigned char *compressedFileContent, size_t compressedFileContentSize) {
   if (decompressedContent == NULL) {
     free(decompressedContent);
@@ -42,12 +37,14 @@ uint32_t c_decompress(unsigned char *compressedFileContent, size_t compressedFil
   return decompressedSize;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void collectDecompressedContent(unsigned char *buffer, size_t bufferSize) {
   memcpy(buffer, decompressedContent, bufferSize);
   free(decompressedContent);
   decompressedContent = NULL;
 }
 
+EMSCRIPTEN_KEEPALIVE
 uint32_t c_compress(unsigned char *fileContent, size_t fileContentSize) {
   if (content != NULL) {
     free(content);
@@ -70,6 +67,7 @@ uint32_t c_compress(unsigned char *fileContent, size_t fileContentSize) {
   return size;
 }
 
+EMSCRIPTEN_KEEPALIVE
 void receiveContent(unsigned char *buffer, size_t bufferSize) {
   memcpy(buffer, content, bufferSize);
   free(content);

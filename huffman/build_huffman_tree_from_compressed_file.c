@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "build_huffman_tree_from_compressed_file.h"
 #include "huffman_tree.h"
@@ -17,7 +18,7 @@ HuffmanNode *buildTreeFromCompressedFileUtil(unsigned char *preOrderTraversedTre
   }
   unsigned char currentSymbol = preOrderTraversedTreeContent[(*index)++];
   HuffmanNode *node = newHuffmanNode('-', 0);
-  bool shouldSkipCurrentSymbolAsItIsAnEscapingChar = currentSymbol == ESCAPING_SYMBOL;
+  uint8_t shouldSkipCurrentSymbolAsItIsAnEscapingChar = currentSymbol == ESCAPING_SYMBOL;
   if (shouldSkipCurrentSymbolAsItIsAnEscapingChar) {
     node->byte = preOrderTraversedTreeContent[(*index)++];
   } else if (currentSymbol != JOINING_SYMBOL) {
