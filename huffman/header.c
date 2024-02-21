@@ -54,14 +54,14 @@ HeaderInfo *getHeaderInfo(unsigned char *compressedFileContent) {
 }
 
 unsigned char *getHeaderContent(uint16_t treeContentSize, uint16_t paddingBitsRequiredForEncodedSymbols, HeaderInfo *info) {
-  unsigned char paddingBitsAs3MostSignificantBits = paddingBitsRequiredForEncodedSymbols << 5;
-  uint16_t mostSignificantBitsOfTreeSize = treeContentSize >> 8;
-  unsigned char leastSignificantBitsOfTreeSize = treeContentSize & 0b11111111;
   unsigned char *bytes = (unsigned char*) calloc(HEADER_REQUIRED_BYTES, sizeof(unsigned char));
   if (bytes == NULL) {
     fprintf(stderr, "failed to allocate space for header content at file %s:%d\n", __FILE__, __LINE__);
     return NULL;
   }
+  unsigned char paddingBitsAs3MostSignificantBits = paddingBitsRequiredForEncodedSymbols << 5;
+  uint16_t mostSignificantBitsOfTreeSize = treeContentSize >> 8;
+  unsigned char leastSignificantBitsOfTreeSize = treeContentSize & 0b11111111;
   bytes[0] = paddingBitsAs3MostSignificantBits | mostSignificantBitsOfTreeSize;
   bytes[1] = leastSignificantBitsOfTreeSize;
   info->treeContentSize = treeContentSize;
