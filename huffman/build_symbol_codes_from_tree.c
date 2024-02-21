@@ -21,6 +21,11 @@ unsigned char **buildSymbolCodesFromTree(HuffmanNode *tree) {
   }
   for (size_t i = 0; i < ASCII_SYMBOLS; i++) {
     table[i] = (unsigned char*) calloc(ASCII_SYMBOLS, sizeof(unsigned char));
+    if (table[i] == NULL) {
+      fprintf(stderr, "failed to allocate space for table line at file %s:%d\n", __FILE__, __LINE__);
+      destroyHuffmanTable(table);
+      return NULL;
+    }
   }
   unsigned char *symbolCodeBuilt = (unsigned char*) calloc(ASCII_SYMBOLS, sizeof(unsigned char));
   if (symbolCodeBuilt == NULL) {
