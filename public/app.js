@@ -1,6 +1,7 @@
 const KB = 1024;
 const MB = 1024 * KB;
 const MAX_ALLOWED_SIZE = 150 * MB; // We compile wasm allowing 200MB, so allowing 150MB is ok :)
+const COMPRESSED_FILE_MAX_ALLOWED_SIZE = MAX_ALLOWED_SIZE * 1.3; // A little bit bigger to support the scenario of ineffective compression.
 const MILLISECONDS = 1;
 const SECOND = 1000 * MILLISECONDS;
 const ZIPPER_COMPRESSED_FILE_EXTENSION = '.zipp';
@@ -10,15 +11,36 @@ const DECOMPRESSED_FILE_NAME = `your_decompressed_file`;
 const LOADING = (color = 'border-blue-500') =>
         `<div class="animate-spin h-5 w-5 border-t-4 ${color} border-solid rounded-full"></div>`;
 
-function validateFileSize(inputId) {
+function validateFileSize(inputId, allowedFileSize, onValidFileReceived) {
   const input = document.getElementById(inputId);
   if (input.files && input.files[0]) {
-    if (input.files[0].size > MAX_ALLOWED_SIZE) {
+    if (input.files[0].size > allowedFileSize) {
       alert("File size exceeds the maximum allowed one (150MB). Please choose a smaller file.");
       input.value = '';
       return;
     }
   }
+  onValidFileReceived();
+}
+
+function validateFileToCompress(inputId) {
+  const onValidFileToCompress = () => {
+    const compressButton = document.getElementById('compressButton');
+    compressButton.classList.add('bg-blue-500');
+    compressButton.classList.add('hover:bg-blue-300');
+    compressButton.disabled = false;
+  };
+  validateFileSize(inputId, MAX_ALLOWED_SIZE, onValidFileToCompress);
+}
+
+function validateFileToDecompress(inputId) {
+  const onValidFileToDecompress = () => {
+    const decompressButton = document.getElementById('decompressButton');
+    decompressButton.classList.add('bg-green-500');
+    decompressButton.classList.add('hover:bg-green-300');
+    decompressButton.disabled = false;
+  };
+  validateFileSize(inputId, COMPRESSED_FILE_MAX_ALLOWED_SIZE, onValidFileToDecompress);
 }
 
 async function compress(file) {
@@ -125,6 +147,13 @@ async function uploadFileToCompress() {
       downloadFile(compressedContent, COMPRESSED_FILE_NAME, 'application/octet-stream');
       const { feedbackMessage, textColor } = getCompressionFeedback(originalSize, compressedContentSize);
       showNotificationCard(feedbackMessage, textColor, feedbackCard);
+
+      compressButton.classList.remove('bg-blue-500');
+      compressButton.classList.remove('hover:bg-blue-300');
+      compressButton.classList.add('bg-blue-200');
+      compressButton.disabled = true;
+
+      fileInput.value = '';
     } catch (error) {
       console.error('Error getting file content:', error);
     } finally {
@@ -146,6 +175,13 @@ async function uploadFileToDecompress() {
     try {
       const { decompressedContent } = await decompress(compressedFile);
       downloadFile(decompressedContent, DECOMPRESSED_FILE_NAME, 'application/octet-stream');
+
+      decompressButton.classList.remove('bg-green-500');
+      decompressButton.classList.remove('hover:bg-green-300');
+      decompressButton.classList.add('bg-green-200');
+      decompressButton.disabled = true;
+
+      compressedFileInput.value = '';
     } catch (error) {
       console.error('failed to decompress:', error);
     } finally {
@@ -168,7 +204,7 @@ function getCompressionFeedback(originalSize, compressedSize) {
 }
 
 function showNotificationCard(message, textColor, cardElement) {
-  const timeVisible = 6 * SECOND;
+  const timeVisible = 7 * SECOND;
 
   cardElement.innerText = message;
   cardElement.classList.add(textColor);
